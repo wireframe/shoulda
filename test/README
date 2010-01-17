@@ -32,5 +32,3 @@ Dependencies:
 * A working sqlite3 installation.
 
 If you have problems running these tests, please notify the mailing list:  shoulda@googlegroups.com
-
-- Tammer Saleh <tsaleh@thoughtbot.com>

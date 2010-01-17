@@ -1,7 +1,7 @@
-class ActiveSupport::TestCase  
+class ActiveSupport::TestCase
   def create_table(table_name, &block)
     connection = ActiveRecord::Base.connection
-    
+
     begin
       connection.execute("DROP TABLE IF EXISTS #{table_name}")
       connection.create_table(table_name, &block)
