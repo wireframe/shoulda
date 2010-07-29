@@ -23,6 +23,7 @@ class HaveSentEmailTest < ActiveSupport::TestCase # :nodoc:
             recipients "myself@me.com"
             subject    "This is spam"
             body       "Every email is spam."
+            headers['Reply-To'] = 'support@example.com'
           end
         end
       end
@@ -55,6 +56,15 @@ class HaveSentEmailTest < ActiveSupport::TestCase # :nodoc:
                      :message => /Expected sent email to/
     end
 
+    should "accept based on headers" do
+      assert_accepts have_sent_email.with_headers({'reply-to' => 'support@example.com'}), nil
+      assert_accepts have_sent_email.with_headers({'reply-to' => /support/}), nil
+      assert_rejects have_sent_email.with_headers({'reply-to' => 'info@example.com'}), nil, 
+                     :message => /Expected sent email with headers/
+      assert_rejects have_sent_email.with_headers({'reply-to' => /info/}), nil, 
+                     :message => /Expected sent email with headers/
+    end
+
     should "list all deliveries within failure message" do
       add_mail_to_deliveries
 
@@ -63,8 +73,8 @@ class HaveSentEmailTest < ActiveSupport::TestCase # :nodoc:
     end
 
     should "chain" do
-      assert_accepts have_sent_email.with_subject(/spam/).from('do-not-reply@example.com').with_body(/spam/).to('myself@me.com'), nil
-      assert_rejects have_sent_email.with_subject(/ham/).from('you@example.com').with_body(/ham/).to('them@example.com'), nil
+      assert_accepts have_sent_email.with_subject(/spam/).from('do-not-reply@example.com').with_body(/spam/).to('myself@me.com').with_headers({'reply-to' => /support/}), nil
+      assert_rejects have_sent_email.with_subject(/ham/).from('you@example.com').with_body(/ham/).to('them@example.com').with_headers({'reply-to' => /info/}), nil
     end
   end
 end
